@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Items {
-    public class PageItem : MonoBehaviour {
+    public class PageItem : AbstractItem {
         [SerializeField] private Button button;
         [SerializeField] private TextMeshProUGUI text;
         public UnityEvent<int> OnPageSelected { get; } = new UnityEvent<int>();

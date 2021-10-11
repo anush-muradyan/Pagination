@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Items;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Components.Pagination.Basic {
-    public class NavigationBar : MonoBehaviour {
+    public class NavigationBar : AbstractContent {
         [Serializable]
         private class NavigationInfo {
             public int Total { get; }
@@ -64,9 +63,6 @@ namespace Components.Pagination.Basic {
         private const int MAX_CONTENT_COUNT = 7;
         [SerializeField] private Button previousButton;
         [SerializeField] private Button nextButton;
-        [SerializeField] private PageItem pageItemPrefab;
-        [SerializeField] private RectTransform content;
-
         [SerializeField, Range(1, MAX_CONTENT_COUNT)]
         private int contentCount = 7;
 
@@ -74,7 +70,7 @@ namespace Components.Pagination.Basic {
 
         private NavigationInfo navigationInfo;
 
-        private List<PageItem> pageItems;
+       
 
         private void OnEnable() {
             previousButton.onClick.AddListener(onPreviousButtonClick);
@@ -93,7 +89,7 @@ namespace Components.Pagination.Basic {
                 : (total / pageContentCount > 1
                     ? (total % pageContentCount == 0 ? total / pageContentCount : total / pageContentCount + 1)
                     : 1);
-            createItems(count);
+            creatItems(count);
             calculateBar(total, pageContentCount);
         }
 
@@ -103,8 +99,8 @@ namespace Components.Pagination.Basic {
         }
 
         private void updateNavigationBar(int start, int count) {
-            for (int i = 0; i < pageItems.Count; i++) {
-                var pageItem = pageItems[i];
+            for (int i = 0; i < items.Count; i++) {
+                var pageItem =(PageItem) items[i];
                 if (i < count) {
                     pageItem.Show();
                     pageItem.Setup(start + i);
@@ -115,31 +111,11 @@ namespace Components.Pagination.Basic {
             }
         }
 
-        private void resetItems() {
-            if (pageItems == null) {
-                return;
-            }
-
-            foreach (var item in pageItems) {
-                Destroy(item.gameObject);
-            }
-
-            pageItems.Clear();
-        }
-
-        private void createItems(int count) {
-            pageItems = new List<PageItem>();
-            for (int i = 0; i < count; i++) {
-                var item = createItem(i);
-                pageItems.Add(item);
-            }
-        }
-
-        private PageItem createItem(int index) {
-            var item = Instantiate(pageItemPrefab, content);
-            item.OnPageSelected.AddListener(onPageSelected);
-            item.Setup(index);
-            return item;
+        protected override AbstractItem creatItem() {
+            var item = base.creatItem();
+            var pageItem = (PageItem) item;
+            pageItem.OnPageSelected.AddListener(onPageSelected);
+            return pageItem;
         }
 
         private void onPageSelected(int index) {
@@ -147,7 +123,7 @@ namespace Components.Pagination.Basic {
         }
 
         private void onNextButtonClick() {
-            navigationInfo.NextSectionPage(out var start, out var count); 
+            navigationInfo.NextSectionPage(out var start, out var count);
             updateNavigationBar(start, count);
         }
 
