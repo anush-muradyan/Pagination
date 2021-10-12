@@ -1,8 +1,9 @@
+using Components;
 using TMPro;
 using UnityEngine;
 
 namespace Items {
-    public class ContentItem : AbstractItem {
+    public class ContentItem : AbstractProduct {
         [SerializeField] private TextMeshProUGUI name;
         [SerializeField] private TextMeshProUGUI price;
 
@@ -13,8 +14,5 @@ namespace Items {
         public void SetPrice(decimal price) {
             this.price.text = price.ToString();
         }
-    }
-
-    public class AbstractItem :MonoBehaviour{
     }
 }
